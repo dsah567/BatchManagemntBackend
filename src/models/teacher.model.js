@@ -16,8 +16,7 @@ const teacherSchema = new mongoose.Schema({
     required: true 
     },
   photo: { 
-    type: Buffer, 
-    contentType: String 
+    type: Buffer,
   }, 
   students: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Student' }]  
 });

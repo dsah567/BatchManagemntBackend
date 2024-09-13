@@ -13,13 +13,13 @@ app.use(express.urlencoded({extended: true, limit: "16kb"}))
 app.use(cookieParser())
 
 //importing routes
-
+import teacherRouter from "./routes/teacher.routes.js";
 
 app.get("/",(req, res) => {
     res.send('hello world')
   })
 
 //route decleare
-
+app.use("/api/v1/teacher",teacherRouter)
 
 export {app}
