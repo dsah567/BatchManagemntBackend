@@ -1,6 +1,7 @@
 import Teacher from '../models/teacher.model.js';
 import Student from '../models/teacher.model.js';
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 const signUpTeacher = async (req, res) => {
   try {
 
@@ -37,11 +38,35 @@ const signInTeacher = async (req, res) => {
     const isMatch = await bcrypt.compare(password, teacher.password);
     if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });
 
-    res.status(200).json({ message: 'Login successful', email });
+    const token = jwt.sign({ id: teacher._id }, process.env.JWT_SECRET, { expiresIn: '24h' });
+    res.cookie('jwt_token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production', 
+      sameSite: 'Strict',
+      maxAge: 24 * 60 * 60 * 1000,  
+    });
+
+    return res.json({ message: 'Login successful' });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
+
+const logoutTeacher = (req, res) => {
+  res.clearCookie('jwt_token', { httpOnly: true, secure: process.env.NODE_ENV === 'production' });
+  res.json({ message: 'Logged out successfully' });
+};
+
+
+const getCurrentTeacher = (req, res) => {
+  try {
+
+    res.json({ user: req.user });  
+  } catch (error) {
+    res.status(401).json({ message: 'Not authenticated' });
+  }
+};
+
 
 const addStudent = async (req, res) => {
   try {
@@ -117,6 +142,8 @@ const deleteStudent = async (req, res) => {
 export {
     signUpTeacher, 
     signInTeacher, 
+    logoutTeacher,
+    getCurrentTeacher,
     addStudent, 
     editStudent, 
     listStudents, 
