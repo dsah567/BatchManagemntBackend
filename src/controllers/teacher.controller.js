@@ -38,7 +38,7 @@ const signInTeacher = async (req, res) => {
     const isMatch = await bcrypt.compare(password, teacher.password);
     if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });
 
-    const token = jwt.sign({ id: teacher._id }, process.env.JWT_SECRET, { expiresIn: '24h' });
+    const token =await jwt.sign({ id: teacher._id }, process.env.JWT_SECRET, { expiresIn: '24h' });
     res.cookie('jwt_token', token, {
       httpOnly: true,
       secure: true, 
