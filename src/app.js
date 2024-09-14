@@ -3,7 +3,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 
 const app = express()
-const allowedOrigins = process.env.ALLOWED_ORIGINS.split(',');
+const allowedOrigins = "http://localhost:5173,https://batchmanagemnt.vercel.app".split(',');
 app.use(cors({
   origin: function (origin, callback) {
     if (!origin || allowedOrigins.includes(origin)) {
