@@ -3,11 +3,18 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 
 const app = express()
-
+const allowedOrigins = process.env.ALLOWED_ORIGINS.split(',');
 app.use(cors({
-    origin: process.env.CORS_ORIGIN1 ||  process.env.CORS_ORIGIN2 ,
-    credentials: true
-}))
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true, // Allow credentials (cookies, authorization headers)
+}));
 app.use(express.json({limit: "16kb"}))
 app.use(express.urlencoded({extended: true, limit: "16kb"}))
 app.use(cookieParser())
