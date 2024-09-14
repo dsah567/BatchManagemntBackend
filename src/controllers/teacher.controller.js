@@ -41,7 +41,8 @@ const signInTeacher = async (req, res) => {
     const token = jwt.sign({ id: teacher._id }, process.env.JWT_SECRET, { expiresIn: '24h' });
     res.cookie('jwt_token', token, {
       httpOnly: true,
-      secure: true,  
+      secure: true, 
+      sameSite: 'strict', 
     });
 
     return res.json({ message: 'Login successful' });
