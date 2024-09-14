@@ -15,6 +15,19 @@ const teacherSchema = new mongoose.Schema({
     type: String, 
     required: true 
     },
+    age:{
+      type: Number, 
+      required: true 
+    },
+    phoneno:{
+      type: Number, 
+      required: true 
+    },
+    gender:{
+      type: String,
+    enum: ['Male', 'Female','Other'],
+    required: true
+    },
   photo: { 
     type: Buffer,
   }, 

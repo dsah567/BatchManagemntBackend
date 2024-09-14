@@ -9,6 +9,11 @@ const studentSchema = new mongoose.Schema({
         type: Number,
         required: true
       },
+      gender:{
+      type: String,
+      enum: ['Male', 'Female','Other'],
+      required: true
+      },
       mobileNo: {
         type: String,
         required: true

@@ -6,12 +6,15 @@ const signUpTeacher = async (req, res) => {
   try {
 
     console.log("signup");
-    const { fullName, email, password } = req.body;
-    console.log(fullName, email, password);
+    const { fullName, email, password,gender,phoneno,age } = req.body;
+    console.log(fullName, email, password,gender,phoneno,age);
     const newTeacher = new Teacher({
         fullName,
         email,
         password,
+        age,
+        gender,
+        phoneno
       });
 
       if (req.file) {
@@ -39,21 +42,13 @@ const signInTeacher = async (req, res) => {
     if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });
 
     const token =await jwt.sign({ id: teacher._id }, process.env.JWT_SECRET, { expiresIn: '24h' });
-    // res.cookie('jwt_token', token, {
-    //   httpOnly: true,
-    //   secure: true, 
-    //   sameSite: 'strict', 
-    // });
+   
 
     return res.cookie('jwt_token', token, {
       httpOnly: true,
       secure: true, 
       sameSite: 'none', 
-    }).json({ message: 'Login successful',user: {
-      fullName: teacher.fullName,
-      _id: teacher._id,
-      email: teacher.email,
-    }, });
+    }).json({ message: 'Login successful',user: teacher });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -71,11 +66,7 @@ const getCurrentTeacher = async (req, res) => {
     console.log({ user: req.user });
     const teacher=await Teacher.findOne({_id:req.user.id })
     console.log(teacher);
-    res.json({ message: 'Login successful',user: {
-      fullName: teacher.fullName,
-      _id: teacher._id,
-      email: teacher.email,
-    }, });  
+    res.json({ message: 'Login successful',user: teacher });  
   } catch (error) {
     console.log('Not authenticated');
     res.status(401).json({ message: 'Not authenticated' });
@@ -85,10 +76,10 @@ const getCurrentTeacher = async (req, res) => {
 
 const addStudent = async (req, res) => {
   try {
-    const { fullName, age, mobileNo, uid, subjectBatch } = req.body;
+    const { fullName, age, gender,mobileNo, uid, subjectBatch } = req.body;
     const teacherId = req.params.id;
-    console.log(fullName, age, mobileNo, uid, subjectBatch,teacherId);
-    const student = new Student({ fullName, age, mobileNo, uid, subjectBatch });
+    console.log(fullName, age,  gender,mobileNo, uid, subjectBatch,teacherId);
+    const student = new Student({ fullName, age,gender, mobileNo, uid, subjectBatch });
     console.log(student);
     await student.save();
     console.log(student);
@@ -106,14 +97,15 @@ const addStudent = async (req, res) => {
 const editStudent = async (req, res) => {
   console.log("inedit");
   try {
-    const { fullName, age, mobileNo, subjectBatch, } = req.body;
+    const { fullName, age,gender, mobileNo, subjectBatch, } = req.body;
     const studentId = req.params.studentId;
-console.log(fullName, age, mobileNo, subjectBatch,studentId);
+console.log(fullName, age,gender, mobileNo, subjectBatch,studentId);
     const student = await Student.findById(studentId);
     if (!student) return res.status(404).json({ message: 'Student not found' });
 
     student.fullName = fullName || student.fullName;
     student.age = age || student.age;
+    student.gender=gender||student.gender;
     student.mobileNo = mobileNo || student.mobileNo;
     student.subjectBatch = subjectBatch || student.subjectBatch;
 
