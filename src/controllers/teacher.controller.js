@@ -39,13 +39,17 @@ const signInTeacher = async (req, res) => {
     if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });
 
     const token =await jwt.sign({ id: teacher._id }, process.env.JWT_SECRET, { expiresIn: '24h' });
-    res.cookie('jwt_token', token, {
+    // res.cookie('jwt_token', token, {
+    //   httpOnly: true,
+    //   secure: true, 
+    //   sameSite: 'strict', 
+    // });
+
+    return res.cookie('jwt_token', token, {
       httpOnly: true,
       secure: true, 
       sameSite: 'strict', 
-    });
-
-    return res.json({ message: 'Login successful' });
+    }).json({ message: 'Login successful' });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
