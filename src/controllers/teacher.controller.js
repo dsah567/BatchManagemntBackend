@@ -48,7 +48,7 @@ const signInTeacher = async (req, res) => {
     return res.cookie('jwt_token', token, {
       httpOnly: true,
       secure: true, 
-      sameSite: 'strict', 
+      sameSite: 'none', 
     }).json({ message: 'Login successful' });
   } catch (err) {
     res.status(500).json({ error: err.message });
