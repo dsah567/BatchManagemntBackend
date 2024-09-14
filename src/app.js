@@ -5,9 +5,8 @@ import cookieParser from "cookie-parser";
 const app = express()
 
 app.use(cors({
-  origin: ['http://localhost:5173', 'https://batchmanagemnt.vercel.app'], // Frontend origins (localhost and Vercel)
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  credentials: true, 
+    origin: process.env.CORS_ORIGIN1 ||  process.env.CORS_ORIGIN2 ,
+    credentials: true
 }))
 app.use(express.json({limit: "16kb"}))
 app.use(express.urlencoded({extended: true, limit: "16kb"}))
