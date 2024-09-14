@@ -1,5 +1,5 @@
 import Teacher from '../models/teacher.model.js';
-import Student from '../models/teacher.model.js';
+import Student from '../models/student.model.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 const signUpTeacher = async (req, res) => {
@@ -49,22 +49,33 @@ const signInTeacher = async (req, res) => {
       httpOnly: true,
       secure: true, 
       sameSite: 'none', 
-    }).json({ message: 'Login successful' });
+    }).json({ message: 'Login successful',user: {
+      fullName: teacher.fullName,
+      _id: teacher._id,
+      email: teacher.email,
+    }, });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
 
 const logoutTeacher = (req, res) => {
+  console.log("inlogout");
   // res.clearCookie('jwt_token', { httpOnly: true, secure: true });
   res.clearCookie('jwt_token', { httpOnly: true, secure: true, sameSite: 'none' }).json({ message: 'Logged out successfully' });
 };
 
 
-const getCurrentTeacher = (req, res) => {
+const getCurrentTeacher = async (req, res) => {
   try {
     console.log({ user: req.user });
-    res.json({ user: req.user });  
+    const teacher=await Teacher.findOne({_id:req.user.id })
+    console.log(teacher);
+    res.json({ message: 'Login successful',user: {
+      fullName: teacher.fullName,
+      _id: teacher._id,
+      email: teacher.email,
+    }, });  
   } catch (error) {
     console.log('Not authenticated');
     res.status(401).json({ message: 'Not authenticated' });
@@ -76,10 +87,11 @@ const addStudent = async (req, res) => {
   try {
     const { fullName, age, mobileNo, uid, subjectBatch } = req.body;
     const teacherId = req.params.id;
-
+    console.log(fullName, age, mobileNo, uid, subjectBatch,teacherId);
     const student = new Student({ fullName, age, mobileNo, uid, subjectBatch });
+    console.log(student);
     await student.save();
-
+    console.log(student);
     const teacher = await Teacher.findById(teacherId);
     teacher.students.push(student._id);
     await teacher.save();
@@ -92,10 +104,11 @@ const addStudent = async (req, res) => {
 
 
 const editStudent = async (req, res) => {
+  console.log("inedit");
   try {
-    const { fullName, age, mobileNo, subjectBatch } = req.body;
+    const { fullName, age, mobileNo, subjectBatch, } = req.body;
     const studentId = req.params.studentId;
-
+console.log(fullName, age, mobileNo, subjectBatch,studentId);
     const student = await Student.findById(studentId);
     if (!student) return res.status(404).json({ message: 'Student not found' });
 
@@ -114,6 +127,7 @@ const editStudent = async (req, res) => {
 
 const listStudents = async (req, res) => {
   try {
+    console.log("inlist");
     const teacherId = req.params.id;
     const teacher = await Teacher.findById(teacherId).populate('students');
 
@@ -127,11 +141,13 @@ const listStudents = async (req, res) => {
 
 const deleteStudent = async (req, res) => {
   try {
+    console.log("indelet");
     const teacherId = req.params.id;
     const studentId = req.params.studentId;
 
     const teacher = await Teacher.findById(teacherId);
     if (!teacher) return res.status(404).json({ message: 'Teacher not found' });
+    console.log(teacher);
 
     teacher.students = teacher.students.filter((id) => id.toString() !== studentId);
     await teacher.save();
@@ -143,6 +159,31 @@ const deleteStudent = async (req, res) => {
   }
 };
 
+const checkuid = async (req, res) => {
+  try {
+    const { uid } = req.body;
+    const student = await Student.findOne({ uid });
+    if (student) {
+      return res.json({ exists: true });
+    }
+    res.json({ exists: false });
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
+  }
+}
+const student = async (req, res) => {
+  console.log("student");
+  try {
+    const studentId = req.params.studentId;
+    console.log(studentId);
+    const student = await Student.findById(studentId);
+    
+    res.status(200).json({ message: 'Student updated successfully', student });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
+
 export {
     signUpTeacher, 
     signInTeacher, 
@@ -151,5 +192,7 @@ export {
     addStudent, 
     editStudent, 
     listStudents, 
-    deleteStudent
+    deleteStudent,
+    checkuid,
+    student
 }
