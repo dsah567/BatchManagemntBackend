@@ -57,7 +57,7 @@ const signInTeacher = async (req, res) => {
 
 const logoutTeacher = (req, res) => {
   // res.clearCookie('jwt_token', { httpOnly: true, secure: true });
-  res.clearCookie('jwt_token', { httpOnly: true, secure: true }).json({ message: 'Logged out successfully' });
+  res.clearCookie('jwt_token', { httpOnly: true, secure: true, sameSite: 'none' }).json({ message: 'Logged out successfully' });
 };
 
 
