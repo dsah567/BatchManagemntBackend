@@ -41,9 +41,7 @@ const signInTeacher = async (req, res) => {
     const token = jwt.sign({ id: teacher._id }, process.env.JWT_SECRET, { expiresIn: '24h' });
     res.cookie('jwt_token', token, {
       httpOnly: true,
-      secure: true, 
-      sameSite: 'Strict',
-      maxAge: 24 * 60 * 60 * 1000,  
+      secure: true,  
     });
 
     return res.json({ message: 'Login successful' });
@@ -60,9 +58,10 @@ const logoutTeacher = (req, res) => {
 
 const getCurrentTeacher = (req, res) => {
   try {
-
+    console.log({ user: req.user });
     res.json({ user: req.user });  
   } catch (error) {
+    console.log('Not authenticated');
     res.status(401).json({ message: 'Not authenticated' });
   }
 };
