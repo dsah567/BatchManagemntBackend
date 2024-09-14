@@ -41,7 +41,7 @@ const signInTeacher = async (req, res) => {
     const token = jwt.sign({ id: teacher._id }, process.env.JWT_SECRET, { expiresIn: '24h' });
     res.cookie('jwt_token', token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production', 
+      secure: true, 
       sameSite: 'Strict',
       maxAge: 24 * 60 * 60 * 1000,  
     });
