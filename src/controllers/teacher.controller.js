@@ -56,8 +56,8 @@ const signInTeacher = async (req, res) => {
 };
 
 const logoutTeacher = (req, res) => {
-  res.clearCookie('jwt_token', { httpOnly: true, secure: process.env.NODE_ENV === 'production' });
-  res.json({ message: 'Logged out successfully' });
+  // res.clearCookie('jwt_token', { httpOnly: true, secure: true });
+  res.clearCookie('jwt_token', { httpOnly: true, secure: true }).json({ message: 'Logged out successfully' });
 };
 
 
