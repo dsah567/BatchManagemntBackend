@@ -8,6 +8,9 @@ const signUpTeacher = async (req, res) => {
     console.log("signup");
     const { fullName, email, password,gender,phoneno,age } = req.body;
     console.log(fullName, email, password,gender,phoneno,age);
+    const teacher = await Teacher.findOne({ email });
+    console.log(email,password);
+    if (teacher) return res.status(400).json({ message: 'email already exist' });
     const newTeacher = new Teacher({
         fullName,
         email,
@@ -25,7 +28,7 @@ const signUpTeacher = async (req, res) => {
 
     res.status(201).json({ message: 'Teacher signed up successfully!' });
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    res.status(500).json({message: 'server error' , error: err.message });
   }
 };
 
