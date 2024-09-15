@@ -5,11 +5,9 @@ import jwt from 'jsonwebtoken';
 const signUpTeacher = async (req, res) => {
   try {
 
-    console.log("signup");
     const { fullName, email, password,gender,phoneno,age } = req.body;
-    console.log(fullName, email, password,gender,phoneno,age);
     const teacher = await Teacher.findOne({ email });
-    console.log(email,password);
+    
     if (teacher) return res.status(400).json({ message: 'email already exist' });
     const newTeacher = new Teacher({
         fullName,
@@ -35,10 +33,10 @@ const signUpTeacher = async (req, res) => {
 
 const signInTeacher = async (req, res) => {
   const { email, password } = req.body;
-  console.log("signin");
+  
   try {
     const teacher = await Teacher.findOne({ email });
-    console.log(email,password);
+    
     if (!teacher) return res.status(400).json({ message: 'Teacher not found' });
 
     const isMatch = await bcrypt.compare(password, teacher.password);
@@ -59,7 +57,7 @@ const signInTeacher = async (req, res) => {
 };
 
 const logoutTeacher = (req, res) => {
-  console.log("inlogout");
+
   // res.clearCookie('jwt_token', { httpOnly: true, secure: true });
   res.clearCookie('jwt_token', { httpOnly: true, secure: true, sameSite: 'none' }).json({ message: 'Logged out successfully' });
 };
@@ -67,12 +65,12 @@ const logoutTeacher = (req, res) => {
 
 const getCurrentTeacher = async (req, res) => {
   try {
-    console.log({ user: req.user });
+    
     const teacher=await Teacher.findOne({_id:req.user.id })
-    console.log(teacher);
+    
     res.json({ message: 'Login successful',user: teacher });  
   } catch (error) {
-    console.log('Not authenticated');
+   
     res.status(401).json({ message: 'Not authenticated' });
   }
 };
@@ -82,11 +80,11 @@ const addStudent = async (req, res) => {
   try {
     const { fullName, age, gender,mobileNo, uid, subjectBatch } = req.body;
     const teacherId = req.params.id;
-    console.log(fullName, age,  gender,mobileNo, uid, subjectBatch,teacherId);
+
     const student = new Student({ fullName, age,gender, mobileNo, uid, subjectBatch });
-    console.log(student);
+    
     await student.save();
-    console.log(student);
+    
     const teacher = await Teacher.findById(teacherId);
     teacher.students.push(student._id);
     await teacher.save();
@@ -99,11 +97,11 @@ const addStudent = async (req, res) => {
 
 
 const editStudent = async (req, res) => {
-  console.log("inedit");
+  
   try {
     const { fullName, age,gender, mobileNo, subjectBatch, } = req.body;
     const studentId = req.params.studentId;
-console.log(fullName, age,gender, mobileNo, subjectBatch,studentId);
+
     const student = await Student.findById(studentId);
     if (!student) return res.status(404).json({ message: 'Student not found' });
 
@@ -123,7 +121,7 @@ console.log(fullName, age,gender, mobileNo, subjectBatch,studentId);
 
 const listStudents = async (req, res) => {
   try {
-    console.log("inlist");
+   
     const teacherId = req.params.id;
     const teacher = await Teacher.findById(teacherId).populate('students');
 
@@ -137,13 +135,13 @@ const listStudents = async (req, res) => {
 
 const deleteStudent = async (req, res) => {
   try {
-    console.log("indelet");
+   
     const teacherId = req.params.id;
     const studentId = req.params.studentId;
 
     const teacher = await Teacher.findById(teacherId);
     if (!teacher) return res.status(404).json({ message: 'Teacher not found' });
-    console.log(teacher);
+
 
     teacher.students = teacher.students.filter((id) => id.toString() !== studentId);
     await teacher.save();
@@ -168,10 +166,10 @@ const checkuid = async (req, res) => {
   }
 }
 const student = async (req, res) => {
-  console.log("student");
+  
   try {
     const studentId = req.params.studentId;
-    console.log(studentId);
+  
     const student = await Student.findById(studentId);
     
     res.status(200).json({ message: 'Student updated successfully', student });
