@@ -51,6 +51,7 @@ const signInTeacher = async (req, res) => {
       httpOnly: true,
       secure: true, 
       sameSite: 'none', 
+      maxAge: 24 * 60 * 60 * 1000,
     }).json({ message: 'Login successful',user: teacher });
   } catch (err) {
     res.status(500).json({ error: err.message });
